@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 470" font-family="Inter, -apple-system, system-ui, sans-serif" role="img" aria-label="Proximity versus access diagram: a straight-line proximity path and a longer actual pedestrian route between a resident and a neighborhood care facility, moderated by family support.">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1A1A1A"/>
+    </marker>
+    <marker id="arrowm" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#6B6862"/>
+    </marker>
+  </defs>
+
+  <!-- arterial barrier -->
+  <rect x="486" y="70" width="28" height="300" fill="#F2E9C8"/>
+  <line x1="500" y1="70" x2="500" y2="370" stroke="#6B6862" stroke-width="1" stroke-dasharray="2 6"/>
+  <text x="500" y="392" text-anchor="middle" font-size="15" fill="#6B6862" font-style="italic">arterial crossing</text>
+
+  <!-- RESIDENT node -->
+  <circle cx="150" cy="210" r="30" fill="#fff" stroke="#1A1A1A" stroke-width="1.5"/>
+  <circle cx="150" cy="210" r="4" fill="#1A1A1A"/>
+  <text x="150" y="266" text-anchor="middle" font-size="18" font-weight="600" fill="#1A1A1A">Resident</text>
+  <text x="150" y="286" text-anchor="middle" font-size="14" fill="#6B6862">high single-elderly density</text>
+
+  <!-- FACILITY node -->
+  <rect x="820" y="180" width="60" height="60" rx="3" fill="#fff" stroke="#1A1A1A" stroke-width="1.5"/>
+  <path d="M838 210 h24 M850 198 v24" stroke="#1A1A1A" stroke-width="1.5"/>
+  <text x="850" y="266" text-anchor="middle" font-size="18" font-weight="600" fill="#1A1A1A">Care facility</text>
+  <text x="850" y="286" text-anchor="middle" font-size="14" fill="#6B6862">clinic within a 15-min walk</text>
+
+  <!-- PATH 1 : proximity, straight dashed -->
+  <line x1="184" y1="196" x2="816" y2="196" stroke="#6B6862" stroke-width="1.5" stroke-dasharray="7 6" marker-end="url(#arrowm)"/>
+  <text x="500" y="130" text-anchor="middle" font-size="17" font-weight="600" fill="#1A1A1A">Proximity</text>
+  <text x="500" y="150" text-anchor="middle" font-size="14" fill="#6B6862">straight-line distance · assumed access</text>
+
+  <!-- PATH 2 : actual pedestrian route, jagged solid -->
+  <path d="M168 238
+           L250 300 L250 335 L360 335 L360 300 L470 300
+           L470 335 L540 335 L540 300 L650 300
+           L650 335 L760 335 L784 335 L784 243 L846 243"
+        fill="none" stroke="#1A1A1A" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)"/>
+  <text x="500" y="430" text-anchor="middle" font-size="17" font-weight="600" fill="#1A1A1A">Access</text>
+  <text x="500" y="450" text-anchor="middle" font-size="14" fill="#6B6862">actual pedestrian route · connectivity, crossings, barriers</text>
+
+  <!-- MODERATOR dial -->
+  <g transform="translate(150,360)">
+    <path d="M-34 8 A34 34 0 0 1 34 8" fill="none" stroke="#D7D2C4" stroke-width="2"/>
+    <line x1="0" y1="8" x2="22" y2="-18" stroke="#1A1A1A" stroke-width="2"/>
+    <circle cx="0" cy="8" r="3.5" fill="#1A1A1A"/>
+    <text x="-34" y="26" text-anchor="middle" font-size="11" fill="#6B6862">low</text>
+    <text x="34" y="26" text-anchor="middle" font-size="11" fill="#6B6862">high</text>
+    <text x="0" y="52" text-anchor="middle" font-size="14" font-weight="600" fill="#1A1A1A">Family support</text>
+    <text x="0" y="70" text-anchor="middle" font-size="13" fill="#6B6862">the moderator</text>
+  </g>
+</svg>

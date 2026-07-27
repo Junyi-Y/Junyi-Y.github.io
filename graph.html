@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Graph · Junyi Yang</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1A1A1A;--muted:#6B6862;--rule:#D7D2C4;--gold:#B08D2E;--bg:#FFFFFF;
+  --sans:'Inter',-apple-system,system-ui,sans-serif}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;font-family:var(--sans);color:var(--ink);background:var(--bg);overflow:hidden}
+.bar{position:fixed;top:0;left:0;right:0;height:66px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;border-bottom:1px solid var(--rule);background:var(--bg);z-index:5}
+.bar .wm{font-weight:700;letter-spacing:.02em;font-size:13px;color:var(--ink);text-decoration:none}
+.bar .right{display:flex;align-items:center;gap:20px}
+.bar .hint{font-size:11px;color:var(--muted)}
+.view-switch{display:inline-flex;align-items:stretch;border:1px solid var(--rule);border-radius:2px;overflow:hidden}
+.view-switch .vs{font-size:10px;letter-spacing:.04em;text-transform:uppercase;line-height:1;
+  padding:6px 10px;color:var(--muted);text-decoration:none;display:inline-flex;align-items:center;gap:5px}
+.view-switch .vs+.vs{border-left:1px solid var(--rule)}
+.view-switch .vs svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:1.3}
+.view-switch .vs.active{background:var(--ink);color:var(--bg)}
+.view-switch a.vs:hover{color:var(--ink)}
+#wrap{position:fixed;top:66px;left:0;right:0;bottom:0}
+svg{width:100%;height:100%;display:block;cursor:grab}
+svg.dragging{cursor:grabbing}
+.edge{stroke:var(--rule);stroke-width:0.8}
+.node circle{cursor:pointer;transition:fill .15s}
+.node text{font-size:11px;fill:var(--muted);pointer-events:none;user-select:none}
+.node.hl text{fill:var(--ink);font-weight:600}
+.dim{opacity:.15;transition:opacity .15s}
+.legend{position:fixed;left:24px;bottom:20px;font-size:11px;color:var(--muted);line-height:1.9}
+.legend span{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;vertical-align:middle}
+</style>
+</head><body>
+<div class="bar">
+  <a class="wm" href="/index.html">Junyi Yang</a>
+  <div class="right">
+    <span class="hint">Click a node to open it. Drag to rearrange.</span>
+    <div class="view-switch" role="group" aria-label="View">
+      <a class="vs" href="/index.html"><svg viewBox="0 0 14 14"><path d="M1 3h12M1 7h12M1 11h8"/></svg>Manuscript</a>
+      <span class="vs active"><svg viewBox="0 0 20 20"><circle cx="4" cy="10" r="2.2"/><circle cx="15" cy="4.5" r="2.2"/><circle cx="15.5" cy="15" r="2.2"/><line x1="6" y1="9" x2="13" y2="5.5"/><line x1="6" y1="11" x2="13.5" y2="14"/></svg>Graph</span>
+    </div>
+  </div>
+</div>
+<div id="wrap"><svg id="g"></svg></div>
+<div class="legend">
+  <div><span style="background:#B08D2E"></span>Research</div>
+  <div><span style="background:#2E6FB6"></span>Making</div>
+  <div><span style="background:#7B54B8"></span>Reading</div>
+  <div><span style="background:#2C8AA6"></span>About &amp; Now</div>
+</div>
+<script>
+const DATA={"nodes": [{"id": "about", "label": "About", "url": "/about.html", "g": "page"}, {"id": "asking", "label": "Asking · Research", "url": "/research.html", "g": "hub"}, {"id": "now", "label": "Now", "url": "/now.html", "g": "page"}, {"id": "abstract", "label": "Proximity is not access", "url": "/writing/proximity-is-not-access.html", "g": "hub"}, {"id": "corburn", "label": "Corburn", "url": "/reading/corburn-toward-the-healthy-city.html", "g": "reading"}, {"id": "klinenberg", "label": "Klinenberg", "url": "/reading/klinenberg-palaces-for-the-people.html", "g": "reading"}, {"id": "forsyth", "label": "Forsyth", "url": "/reading/forsyth-healthy-places-typology.html", "g": "reading"}, {"id": "hong", "label": "Hong", "url": "/reading/hong-age-friendly-communities.html", "g": "reading"}, {"id": "greer", "label": "Greer", "url": "/reading/greer-aging-in-place.html", "g": "reading"}, {"id": "mu-childrens-surgery", "label": "MU Surgery", "url": "/work/mu-childrens-surgery.html", "g": "project"}, {"id": "plug-in-the-canal", "label": "Plug In The Canal", "url": "/work/plug-in-the-canal.html", "g": "project"}, {"id": "st-louis-mapping", "label": "St. Louis Mapping", "url": "/work/st-louis-mapping.html", "g": "project"}, {"id": "aging-care-xiangyang", "label": "Aging Care Xiangyang", "url": "/work/aging-care-xiangyang.html", "g": "project"}, {"id": "making-places-of-joy", "label": "Making Places of Joy", "url": "/work/making-places-of-joy.html", "g": "project"}, {"id": "one-planet-living", "label": "One Planet Living", "url": "/work/one-planet-living.html", "g": "project"}, {"id": "intl-students-housing", "label": "Intl Students Housing", "url": "/work/intl-students-housing.html", "g": "project"}, {"id": "smooth-house", "label": "SMOOTH House", "url": "/work/smooth-house.html", "g": "project"}], "edges": [["about", "abstract"], ["about", "aging-care-xiangyang"], ["about", "mu-childrens-surgery"], ["about", "smooth-house"], ["asking", "abstract"], ["now", "abstract"], ["asking", "mu-childrens-surgery"], ["asking", "plug-in-the-canal"], ["asking", "st-louis-mapping"], ["asking", "aging-care-xiangyang"], ["asking", "making-places-of-joy"], ["asking", "one-planet-living"], ["asking", "intl-students-housing"], ["asking", "smooth-house"], ["asking", "corburn"], ["asking", "klinenberg"], ["asking", "forsyth"], ["asking", "hong"], ["asking", "greer"], ["now", "corburn"], ["now", "klinenberg"], ["now", "forsyth"], ["now", "hong"], ["now", "greer"], ["aging-care-xiangyang", "st-louis-mapping"], ["aging-care-xiangyang", "smooth-house"], ["mu-childrens-surgery", "smooth-house"], ["plug-in-the-canal", "intl-students-housing"], ["one-planet-living", "plug-in-the-canal"], ["making-places-of-joy", "st-louis-mapping"], ["aging-care-xiangyang", "hong"], ["aging-care-xiangyang", "greer"], ["st-louis-mapping", "corburn"], ["making-places-of-joy", "klinenberg"], ["smooth-house", "greer"], ["intl-students-housing", "klinenberg"], ["hong", "greer"], ["corburn", "forsyth"], ["klinenberg", "corburn"]]};
+const NODES=DATA.nodes;
+const EDGES=DATA.edges;
+const COLORS={hub:'#B08D2E',project:'#2E6FB6',reading:'#7B54B8',page:'#2C8AA6'};
+const by={}; NODES.forEach(n=>by[n.id]=n);
+NODES.forEach(n=>n.deg=0); EDGES.forEach(e=>{by[e[0]].deg++;by[e[1]].deg++;});
+const nb={}; NODES.forEach(n=>nb[n.id]=new Set());
+EDGES.forEach(e=>{nb[e[0]].add(e[1]);nb[e[1]].add(e[0]);});
+
+const svg=document.getElementById('g');
+const NS='http://www.w3.org/2000/svg';
+function W(){return svg.clientWidth} function H(){return svg.clientHeight}
+NODES.forEach((n,i)=>{const a=i/NODES.length*Math.PI*2; n.x=W()/2+Math.cos(a)*200+(Math.random()-.5)*40; n.y=H()/2+Math.sin(a)*160+(Math.random()-.5)*40; n.vx=0;n.vy=0;});
+
+// build svg elements
+const eEls=EDGES.map(e=>{const l=document.createElementNS(NS,'line');l.setAttribute('class','edge');l.__e=e;svg.appendChild(l);return l;});
+const gEls=NODES.map(n=>{
+  const grp=document.createElementNS(NS,'g');grp.setAttribute('class','node');grp.__n=n;
+  const c=document.createElementNS(NS,'circle');const r=7+Math.min(n.deg,14)*1.3;
+  c.setAttribute('r',r);c.setAttribute('fill',COLORS[n.g]);n.__r=r;
+  const t=document.createElementNS(NS,'text');t.setAttribute('x',r+5);t.setAttribute('y',4);t.textContent=n.label;
+  grp.appendChild(c);grp.appendChild(t);svg.appendChild(grp);
+  grp.addEventListener('mouseenter',()=>highlight(n));
+  grp.addEventListener('mouseleave',clearHi);
+  return grp;
+});
+
+let REP=8800,SPRING=0.02,L=178,GRAV=0.0038,DAMP=0.9, drag=null;
+function step(){
+  const cx=W()/2,cy=H()/2;
+  for(let i=0;i<NODES.length;i++)for(let j=i+1;j<NODES.length;j++){
+    const a=NODES[i],b=NODES[j];let dx=a.x-b.x,dy=a.y-b.y;let d2=dx*dx+dy*dy+0.1;let d=Math.sqrt(d2);
+    let f=REP/d2;let fx=f*dx/d,fy=f*dy/d;a.vx+=fx;a.vy+=fy;b.vx-=fx;b.vy-=fy;
+  }
+  EDGES.forEach(e=>{const a=by[e[0]],b=by[e[1]];let dx=b.x-a.x,dy=b.y-a.y;let d=Math.sqrt(dx*dx+dy*dy)+0.1;
+    let f=(d-L)*SPRING;let fx=f*dx/d,fy=f*dy/d;a.vx+=fx;a.vy+=fy;b.vx-=fx;b.vy-=fy;});
+  NODES.forEach(n=>{n.vx+=(cx-n.x)*GRAV;n.vy+=(cy-n.y)*GRAV;});
+  NODES.forEach(n=>{if(n===drag)return;n.vx*=DAMP;n.vy*=DAMP;
+    n.x=Math.max(60,Math.min(W()-60,n.x+n.vx));n.y=Math.max(20,Math.min(H()-30,n.y+n.vy));});
+  eEls.forEach(l=>{const a=by[l.__e[0]],b=by[l.__e[1]];l.setAttribute('x1',a.x);l.setAttribute('y1',a.y);l.setAttribute('x2',b.x);l.setAttribute('y2',b.y);});
+  gEls.forEach(g=>{g.setAttribute('transform','translate('+g.__n.x+','+g.__n.y+')');});
+  requestAnimationFrame(step);
+}
+step();
+
+function highlight(n){
+  const keep=new Set([n.id,...nb[n.id]]);
+  gEls.forEach(g=>{g.classList.toggle('dim',!keep.has(g.__n.id));g.classList.toggle('hl',g.__n.id===n.id);});
+  eEls.forEach(l=>{const on=l.__e[0]===n.id||l.__e[1]===n.id;l.classList.toggle('dim',!on);l.style.stroke=on?'#1A1A1A':'';});
+}
+function clearHi(){gEls.forEach(g=>{g.classList.remove('dim','hl');});eEls.forEach(l=>{l.classList.remove('dim');l.style.stroke='';});}
+
+// drag + click
+let downAt=null,moved=false;
+svg.addEventListener('mousedown',ev=>{
+  const g=ev.target.closest('.node'); if(!g)return;
+  drag=g.__n;downAt={x:ev.clientX,y:ev.clientY};moved=false;svg.classList.add('dragging');
+});
+window.addEventListener('mousemove',ev=>{
+  if(!drag)return;const r=svg.getBoundingClientRect();
+  drag.x=ev.clientX-r.left;drag.y=ev.clientY-r.top;drag.vx=0;drag.vy=0;
+  if(downAt&&Math.hypot(ev.clientX-downAt.x,ev.clientY-downAt.y)>4)moved=true;
+});
+window.addEventListener('mouseup',ev=>{
+  if(drag&&!moved){window.location=drag.url;}
+  drag=null;svg.classList.remove('dragging');
+});
+</script>
+</body></html>
